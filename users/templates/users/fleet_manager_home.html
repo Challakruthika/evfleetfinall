@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Manager Dashboard</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'users/css/styles.css' %}">
+
+    <style>
+        /* Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center horizontally */
+            justify-content: center; /* Center vertically */
+            height: 100vh; /* Full viewport height */
+        }
+
+        /* Header Styling */
+        .header {
+            position: fixed; /* Sticks to the top */
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+            padding: 10px 20px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000; /* Ensures it stays above other content */
+            box-sizing: border-box; /* Prevents content from overflowing */
+        }
+
+        .header .title {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .header .logout-button {
+            padding: 8px 15px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline */
+            transition: background-color 0.3s ease;
+        }
+
+        .header .logout-button:hover {
+            background-color: #e60000; /* Darker red on hover */
+        }
+
+        /* Wrapper Styling */
+        .wrapper {
+            width: 100%;
+            max-width: 800px; /* Reduced the max-width for smaller content */
+            padding: 20px; /* Reduced padding for a smaller background */
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+            color: #333;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally */
+            justify-content: flex-start; /* Align content to the top */
+            min-height: 400px; /* Reduced height for the white background */
+        }
+
+        /* Title Styling */
+        h1 {
+            font-size: 1.8rem; /* Slightly smaller title font */
+            margin-bottom: 20px; /* Reduced margin */
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Greeting */
+        .greeting {
+            font-size: 1.3rem; /* Reduced greeting font size */
+            margin-bottom: 20px;
+            color: #0072ff;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            width: 100%; /* Ensure full width for buttons */
+            max-width: 700px; /* Limit the max width */
+        }
+
+        /* Button Styling */
+        .btn {
+            flex: 1;
+            padding: 12px;
+            background-color: #00c6ff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+            margin: 5px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #0072ff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header .title {
+                font-size: 1.2rem;
+            }
+
+            .header .logout-button {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+
+            .wrapper {
+                margin-top: 0; /* Remove the top margin on smaller screens */
+            }
+
+            .button-container {
+                flex-direction: column; /* Stack buttons on smaller screens */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="title">Fleet Manager Dashboard</div>
+        <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="wrapper">
+        <p></p><br>
+        <h1>WELCOME FLEET MANAGER!!</h1>
+        <div class="greeting">Welcome to your Fleet Management Dashboard! Monitor and manage your vehicles in real-time for optimal performance and efficiency.</div>
+        <div class="button-container">
+            <a href="{% url 'introduction_to_ev' %}" class="btn">Introduction to EV</a>
+            <a href="{% url 'dataset' %}" class="btn">Dataset</a>
+            <a href="{% url 'relationship' %}" class="btn">Relationship</a>
+            <a href="{% url 'vehicle_status' %}" class="btn">Vehicle Status</a>
+            <a href="{% url 'predict_electric_range' %}" class="btn">Prediction</a>
+        </div>
+    </div>
+</body>
+</html>

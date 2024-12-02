@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <title>Introduction to Electric Vehicles</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'users/css/styles.css' %}">
+    <style>
+        /* Body and Overall Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+
+        /* Wrapper Styling */
+        .wrapper {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+            width: 70%; /* Make the container smaller */
+            max-width: 800px; /* Set a maximum width */
+            font-family: 'Poppins', sans-serif;
+            margin-top: 20px;
+            max-height: 85vh; /* Set the maximum height */
+            overflow-y: scroll; /* Allow scrolling inside the container */
+            scrollbar-width: none; /* For Firefox */
+            position:relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Heading Styling */
+        h1 {
+            font-size: 2rem;
+            font-weight: 1000;
+            margin-bottom: 20px;
+            text-align:center;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        /* Paragraph and List Styling */
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 30px;
+        }
+
+        ul li {
+            font-size: 1.1rem;
+            margin: 15px 0;
+            text-align: justify;
+        }
+
+        /* Image Styling */
+        img {
+            width: 80%;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        /* Call-to-action Button */
+        .cta-btn {
+            padding: 12px 24px;
+            background-color: #0072ff;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Button for navigation */
+        .dashboard-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            color: #fff;
+            background-color: #00c6ff; /* Match button to the left side of the gradient */
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .dashboard-btn:hover {
+            background-color: #0072ff; /* Hover effect to match the right side of the gradient */
+        }
+
+        /* Center the button in the wrapper */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Welcome to the Future of Transportation!</h1>
+        <p>
+            Electric Vehicles (EVs) represent a shift towards sustainable, smart, and eco-friendly transportation. Powered by electricity, EVs are revolutionizing the automotive industry by offering advanced features, reduced carbon footprints, and long-term savings.
+        </p>
+        <h2>Why EVs are the Future?</h2>
+        <ul>
+            <li>🔋 Zero Emissions: Drive with a clear conscience—EVs produce zero emissions, reducing air pollution and combating climate change.</li>
+            <li>💰 Lower Operating Costs: Say goodbye to expensive fuel. EVs cost less to maintain and charge than traditional gasoline-powered cars.</li>
+            <li>⚡Advanced Technology: From fast-charging capabilities to cutting-edge driver assistance systems, EVs come equipped with the latest innovations.</li>
+            <li>🌍 Eco-friendly: EVs contribute to a cleaner environment by using renewable energy sources and reducing reliance on fossil fuels.</li>
+        </ul>
+        <div class="button-container">
+            <a href="{% url 'fleet_manager_home' %}" class="dashboard-btn">Go to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

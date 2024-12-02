@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Status</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+
+        /* Container Styling */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+            width: 70%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        /* Heading Styling */
+        h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Status Counts Styling */
+        .status-counts {
+            display: block;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Chart Styling */
+        canvas {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Button Styling */
+        .cta-btn {
+            padding: 12px 24px;
+            background-color: #00c6ff; /* Match button to the left side of the gradient */
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: #0072ff; /* Hover effect to match the right side of the gradient */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Vehicle Status Visualization</h2>
+
+        <!-- Displaying the vehicle status counts dynamically -->
+        <div class="status-counts">
+            <span><strong>Inactive:</strong> {{ data.values.0 }}</span>
+            <br>
+            <span><strong>Active:</strong> {{ data.values.1 }}</span>
+        </div>
+
+        <!-- Bar Chart -->
+        <canvas id="statusChart" width="400" height="200"></canvas>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get the dynamic data passed from Django view
+                const data = {{ data|safe }}; // Ensure this is safely passed from the Django view
+                
+                // Get the maximum value from the dataset for dynamic Y-axis scaling
+                const maxValue = Math.max(...data.values); // Calculate the highest value in the dataset
+                const chartMax = maxValue + 10; // Add some padding to the max value for visual clarity
+
+                // Configure the Chart.js bar chart
+                const config = {
+                    type: 'bar',
+                    data: {
+                        labels: ['Inactive', 'Active'], // Labels for the chart
+                        datasets: [{
+                            label: 'Vehicle Status', // Descriptive label
+                            data: data.values, // Dynamic data passed from the server
+                            backgroundColor: ['rgba(255, 0, 0, 0.6)', 'rgba(34, 139, 34, 0.6)'], // Red for Inactive, Dark Green for Active
+                            borderColor: ['rgba(139, 0, 0, 1)', 'rgba(0, 100, 0, 1)'], // Dark Red border for Inactive, Dark Green border for Active
+                            borderWidth: 3 // Thicker border for better visibility
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true, // Ensure that the Y-axis starts at 0
+                                min: 0,            // Set the minimum Y-axis value to 0
+                                max: chartMax,     // Dynamically set the Y-axis max value
+                                title: {
+                                    display: true,
+                                    text: 'Count',
+                                    font: {
+                                        size: 16, // Larger font size for y-axis title
+                                        weight: 'bold', // Bold font
+                                        color: '#111' // Darker color for Y-axis title
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 14, // Tick label size
+                                        weight: 'bold', // Bold tick labels
+                                        color: '#333' // Dark color for tick labels
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.2)', // Darker gridlines
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Status',
+                                    font: {
+                                        size: 16, // Larger font size for x-axis title
+                                        weight: 'bold', // Bold font
+                                        color: '#111' // Darker color for 'Status' label
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 14, // Tick label size
+                                        weight: 'bold', // Bold tick labels
+                                        color: '#333' // Dark color for tick labels
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.2)', // Darker gridlines
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false // Disable legend for simplicity
+                            },
+                            tooltip: {
+                                enabled: true // Enable tooltips for interactivity
+                            }
+                        }
+                    }
+                };
+
+                // Render the chart
+                const ctx = document.getElementById('statusChart').getContext('2d');
+                new Chart(ctx, config);
+            });
+        </script>
+
+        <!-- Button to Go to Dashboard -->
+        <div class="button-container">
+            <a href="/fleet_manager_home" class="cta-btn">Go to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

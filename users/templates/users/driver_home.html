@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'users/css/styles.css' %}">
+
+    <style>
+        /* Body and Overall Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff); /* Gradient background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        /* Header Styling */
+        .header {
+            position: fixed; /* Fixed at the top */
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+            padding: 10px 20px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000; /* Ensure it stays above other content */
+            box-sizing: border-box;
+        }
+
+        .header .title {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .header .logout-button {
+            padding: 8px 15px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline */
+            transition: background-color 0.3s ease;
+        }
+
+        .header .logout-button:hover {
+            background-color: #e60000; /* Darker red on hover */
+        }
+
+        /* Container Styling */
+        .wrapper {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slight transparency for modern look */
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+            color: #333; /* Darker text for readability */
+            text-align: center;
+            margin-top: 80px; /* Adjust to make space for the header */
+        }
+
+        /* Title Styling */
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Greeting */
+        .greeting {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #0072ff; /* Change the greeting color to match the theme */
+        }
+
+        /* Button Styling */
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #00c6ff; /* Button background color */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase; /* Makes button text all caps */
+            margin-top: 20px; /* Added margin to create space */
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #0072ff; /* Change color on hover */
+        }
+
+        /* Footer Styling */
+        footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="title">Driver Dashboard</div>
+        <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="wrapper">
+        <h1>WELCOME DRIVER!!!</h1>
+        <div class="greeting">Welcome to Your EV Dashboard! Stay connected with your electric vehicle like never before.</div>
+
+        <!-- Add a button that directs to the predict_range page -->
+        <a href="{% url 'predict_range' %}" class="btn">Check how far your EV can travel?</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Far Can You Go?</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'users/css/styles.css' %}">
+
+    <style>
+        /* Body and Overall Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff); /* Gradient background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Container Styling */
+        .wrapper {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slight transparency for modern look */
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+            color: #333; /* Darker text for readability */
+            text-align: center;
+        }
+
+        /* Title Styling */
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #0072ff; /* Change the subheading color to match the theme */
+        }
+
+        /* Button Styling */
+        .btn {
+            width: 250px; /* Set button width */
+            padding: 12px; 
+            background-color: #00c6ff; /* Button background color */
+            color: #fff; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 1rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease; 
+            text-transform: uppercase; /* Makes button text all caps */ 
+            margin-top: 20px; /* Added margin to create space */
+            text-decoration: none; /* Remove underline from links */
+        }
+
+        .btn:hover {
+            background-color: #0072ff; /* Change color on hover */
+        }
+
+        /* Go to Dashboard Button Underline Style */
+        
+
+        /* Error Message Styling */
+        .error {
+            color: red; 
+        }
+        
+        /* Input field styling */
+        input, select {
+            width: calc(100% - 20px); /* Ensure inputs are same length as buttons */
+            padding: 10px; 
+            margin-bottom: 20px; /* Space between inputs */ 
+            border-radius: 5px; 
+            border: 1px solid #ccc; /* Light border for inputs */ 
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h2>Predict Electric Range</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <!-- Vehicle Make -->
+            <label for="make">Vehicle Make:</label>
+            <select name="make" id="make" required>
+                <option value=""> </option>
+                <option value="Tesla1" {% if make == 'Tesla1' %}selected{% endif %}>Tesla1</option>
+                <option value="Tesla2" {% if make == 'Tesla2' %}selected{% endif %}>Tesla2</option>
+                <option value="BMW" {% if make == 'BMW' %}selected{% endif %}>BMW</option>
+                <option value="Polestar" {% if make == 'Polestar' %}selected{% endif %}>Polestar</option>
+                <option value="Volkswagen" {% if make == 'Volkswagen' %}selected{% endif %}>Volkswagen</option>
+            </select>
+
+            <!-- Battery Level -->
+            <label for="battery_level">Battery Level (%):</label>
+            <input type="number" name="battery_level" id="battery_level" min="0" max="100" required value="{{ battery_level|default:'' }}">
+
+           <!-- Submit Button -->
+           <button type="submit" class="btn">Predict</button>
+       </form>
+
+       <br>
+
+       <!-- Go to Dashboard Button -->
+       <a href="{% url 'fleet_manager_home' %}" class="btn dashboard">Go to Dashboard</a>
+
+       {% if predicted_range %}
+           <h3>EV can travel <strong>{{ predicted_range|floatformat:0  }} km</strong> on the current charge!</h3>
+       {% elif error %}
+           <h3 class="error">{{ error }}</h3>
+       {% endif %}
+   </div>
+</body>
+</html>
+
+

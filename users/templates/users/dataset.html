@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Overview</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Body and Overall Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+            overflow: hidden; /* Hide body overflow to avoid extra scrollbar */
+        }
+
+        /* Container Styling */
+        .container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+            width: 70%; /* Make the container smaller */
+            max-width: 800px; /* Set a maximum width */
+            font-family: 'Poppins', sans-serif;
+            margin-top: 20px;
+            max-height: 85vh; /* Set the maximum height */
+            overflow-y: scroll; /* Allow scrolling inside the container */
+            scrollbar-width: none; /* For Firefox */
+        }
+
+        /* Heading Styling */
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        /* Column Styling */
+        .column {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .column i {
+            font-size: 30px;
+            margin-right: 15px;
+        }
+
+        .column .text {
+            font-size: 1.1rem;
+        }
+
+        .column-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .description {
+            color: #ddd;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Button Styling */
+        .cta-btn {
+            padding: 12px 24px;
+            background-color: #00c6ff; /* Match button to the left side of the gradient */
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: #0072ff; /* Hover effect to match the right side of the gradient */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Dataset Overview</h2>
+        <div class="column">
+            <i class="bx bx-id-card"></i>
+            <div class="text">
+                <span class="column-name">Unique ID:</span>
+                <span class="description">Unique identifier for each entry in the dataset.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-user"></i>
+            <div class="text">
+                <span class="column-name">Username:</span>
+                <span class="description">Name of the user associated with the vehicle (e.g., driver or fleet manager).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-envelope"></i>
+            <div class="text">
+                <span class="column-name">Email:</span>
+                <span class="description">Email address of the user.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-user-circle"></i>
+            <div class="text">
+                <span class="column-name">Role:</span>
+                <span class="description">The role of the user, such as driver or fleet manager.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-car"></i>
+            <div class="text">
+                <span class="column-name">Make:</span>
+                <span class="description">The manufacturer or brand of the electric vehicle.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-timer"></i>
+            <div class="text">
+                <span class="column-name">Acceleration (0-100 km/h):</span>
+                <span class="description">Time taken by the vehicle to accelerate from 0 to 100 km/h, measured in seconds.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-tachometer"></i>
+            <div class="text">
+                <span class="column-name">Top Speed:</span>
+                <span class="description">Maximum speed the vehicle can achieve, measured in km/h.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-battery"></i>
+            <div class="text">
+                <span class="column-name">Electric Range:</span>
+                <span class="description">Distance the vehicle can travel on a full charge, measured in kilometers.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-power-off"></i>
+            <div class="text">
+                <span class="column-name">Total Power:</span>
+                <span class="description">Total power output of the vehicle, measured in kilowatts (kW).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-ruler"></i>
+            <div class="text">
+                <span class="column-name">Length:</span>
+                <span class="description">Length of the vehicle, measured in millimeters (mm).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-car"></i>
+            <div class="text">
+                <span class="column-name">Width:</span>
+                <span class="description">Width of the vehicle, measured in millimeters (mm).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-package"></i>
+            <div class="text">
+                <span class="column-name">Cargo Volume:</span>
+                <span class="description">Total cargo capacity of the vehicle, measured in liters.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-car"></i>
+            <div class="text">
+                <span class="column-name">Height:</span>
+                <span class="description">Height of the vehicle, measured in millimeters (mm).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-power-off"></i>
+            <div class="text">
+                <span class="column-name">Total Torque:</span>
+                <span class="description">Total torque generated by the vehicle, measured in Newton-meters (Nm).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-traffic-cone"></i>
+            <div class="text">
+                <span class="column-name">Wheelbase:</span>
+                <span class="description">Distance between the front and rear axles of the vehicle, measured in millimeters (mm).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-package"></i>
+            <div class="text">
+                <span class="column-name">GVWR:</span>
+                <span class="description">Gross Vehicle Weight Rating, the maximum allowable weight of the vehicle, including passengers and cargo, measured in kilograms (kg).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-car"></i>
+            <div class="text">
+                <span class="column-name">Seats:</span>
+                <span class="description">Number of seats available in the vehicle.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-dollar-circle"></i>
+            <div class="text">
+                <span class="column-name">Maintenance Cost:</span>
+                <span class="description">Cost incurred for maintaining the vehicle, measured in the local currency.</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-package"></i>
+            <div class="text">
+                <span class="column-name">Max. Payload:</span>
+                <span class="description">Maximum weight the vehicle can carry, measured in kilograms (kg).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-battery"></i>
+            <div class="text">
+                <span class="column-name">Battery Capacity:</span>
+                <span class="description">Capacity of the battery, measured in kilowatt-hours (kWh).</span>
+            </div>
+        </div>
+        <div class="column">
+            <i class="bx bx-location-plus"></i>
+            <div class="text">
+                <span class="column-name">Pincode:</span>
+                <span class="description">Postal code indicating the location associated with the entry.</span>
+            </div>
+        </div>
+
+        <!-- Button to Go to Dashboard -->
+        <div class="button-container">
+            <a href="/fleet_manager_home" class="cta-btn">Go to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
