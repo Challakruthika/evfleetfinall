@@ -2,12 +2,18 @@ services:
   - type: web
     name: ev-fleet-management
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    buildCommand: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
     startCommand: gunicorn ev_fleet_management.wsgi:application
     envVars:
       - key: PYTHON_VERSION
-        value: 3.9.0
+        value: 3.9.18
       - key: DEBUG
         value: False
       - key: DJANGO_ALLOWED_HOSTS
-        value: .onrender.com 
+        value: .onrender.com
+      - key: DISABLE_COLLECTSTATIC
+        value: 0
+    autoDeploy: true 
