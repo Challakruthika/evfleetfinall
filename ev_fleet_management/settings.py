@@ -66,7 +66,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -147,29 +146,55 @@ AUTHENTICATION_BACKENDS = [
     'fleet_management.auth.SupabaseAuthBackend',  # Custom auth backend
 ]
 
-# Cache configuration
+# Memory optimization settings
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024  # 2MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024  # 2MB
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+# Cache configuration - use filesystem cache instead of memory
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
-        'TIMEOUT': 300,  # 5 minutes
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/tmp/django_cache',
+        'TIMEOUT': 60,  # 1 minute
         'OPTIONS': {
-            'MAX_ENTRIES': 1000
+            'MAX_ENTRIES': 500
         }
     }
 }
 
-# Session configuration
-SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
-SESSION_CACHE_ALIAS = 'default'
+# Session configuration - use file-based sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+SESSION_FILE_PATH = '/tmp/django_sessions'
+SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_SAVE_EVERY_REQUEST = False
+
+# Database optimization
+DATABASES['default']['CONN_MAX_AGE'] = 0  # Close connections after each request
+DATABASES['default']['OPTIONS'] = {
+    **DATABASES['default'].get('OPTIONS', {}),
+    'max_connections': 5,
+    'keepalives': 1,
+    'keepalives_idle': 5,
+    'keepalives_interval': 5,
+    'keepalives_count': 5,
+}
 
 # Logging configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
     },
     'root': {
@@ -179,32 +204,41 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'WARNING'),
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'level': 'WARNING',
+            'handlers': ['console'],
             'propagate': False,
         },
     },
 }
 
-# Database connection pooling
-DATABASES['default']['CONN_MAX_AGE'] = 60
-DATABASES['default']['OPTIONS'] = {
-    **DATABASES['default'].get('OPTIONS', {}),
-    'max_connections': 10,
-    'keepalives': 1,
-    'keepalives_idle': 30,
-    'keepalives_interval': 10,
-    'keepalives_count': 5,
-}
-
-# File upload settings
-FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
-
 # Template settings
-TEMPLATES[0]['OPTIONS']['debug'] = False
-TEMPLATES[0]['OPTIONS']['loaders'] = [
-    ('django.template.loaders.cached.Loader', [
-        'django.template.loaders.filesystem.Loader',
-        'django.template.loaders.app_directories.Loader',
-    ]),
-]
+for template in TEMPLATES:
+    template['OPTIONS']['debug'] = False
+    template['OPTIONS']['loaders'] = [
+        ('django.template.loaders.cached.Loader', [
+            'django.template.loaders.filesystem.Loader',
+            'django.template.loaders.app_directories.Loader',
+        ]),
+    ]
+    template['OPTIONS']['cache'] = True
+
+# Security settings that might help with memory
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+
+# Disable unnecessary middleware
+MIDDLEWARE = [m for m in MIDDLEWARE if m not in [
+    'django.middleware.locale.LocaleMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+]]
+
+# Optimize installed apps
+INSTALLED_APPS = [app for app in INSTALLED_APPS if app not in [
+    'django.contrib.messages',
+    'django.contrib.humanize',
+]]

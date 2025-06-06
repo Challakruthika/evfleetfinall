@@ -2,14 +2,15 @@ services:
   - type: web
     name: ev-fleet-management
     env: python
-    plan: starter # Specify the plan to ensure adequate resources
+    plan: free
     buildCommand: |
       export PYTHON_CONFIGURE_OPTS="--enable-shared"
       python -m pip install --upgrade pip
       pip install --no-cache-dir -r requirements.txt
       python manage.py collectstatic --noinput
-      python manage.py migrate
-    startCommand: gunicorn ev_fleet_management.wsgi:application -c gunicorn_config.py
+      python manage.py migrate --noinput
+      cp custom_worker.py /opt/render/project/src/
+    startCommand: PYTHONPATH=/opt/render/project/src gunicorn ev_fleet_management.wsgi:application -c gunicorn_config.py --preload
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.7
@@ -28,7 +29,13 @@ services:
       - key: SUPABASE_KEY
         value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4ZW9ieGVvZHp4aXJ6ZGd5bWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyMzI4MTksImV4cCI6MjA2NDgwODgxOX0.V_vLv4xU_LzbKM7YWl2eOxP9QUfcMyyAL4YB31u9LPE
       - key: WEB_CONCURRENCY
-        value: "2"
+        value: "1"
+      - key: DJANGO_LOG_LEVEL
+        value: "WARNING"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: MALLOC_TRIM_THRESHOLD_
+        value: "65536"
     autoDeploy: true
     disk:
       name: ev-data
