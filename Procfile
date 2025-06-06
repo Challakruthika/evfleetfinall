@@ -1,1 +1,1 @@
-web: streamlit run streamlit_prediction.py
+web: gunicorn ev_fleet_management.wsgi:application
