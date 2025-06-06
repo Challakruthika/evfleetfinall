@@ -6,6 +6,14 @@ from .forms import UserRegistrationForm
 from django.contrib.auth.models import User
 from .forms import UserLoginForm
 from django.contrib.auth import authenticate, login as auth_login
+from django.conf import settings
+import numpy as np
+import pickle
+import os
+from sklearn.preprocessing import OneHotEncoder
+import plotly.express as px
+from plotly.offline import plot
+from sklearn.preprocessing import MinMaxScaler
 
 def home_view(request):
     return render(request,'users/home_page.html')
@@ -73,114 +81,92 @@ def relationship(request):
     return render(request, 'users/relationship.html')
 
 def vehicle_status(request):
-    return render(request, 'users/vehicle_status.html')
+    try:
+        df = pd.read_csv(os.path.join(settings.BASE_DIR, 'Datasets', 'EV_Synthetic_Data.csv'))
+        
+        if 'vehicle_status' not in df.columns:
+            return render(request, 'users/vehicle_status.html', 
+                        {'error': "'vehicle_status' column not found in the dataset."})
+
+        status_counts = df['vehicle_status'].value_counts()
+        data = {
+            'labels': ['Inactive', 'Active'],
+            'values': [status_counts.get(0, 0), status_counts.get(1, 0)]
+        }
+        return render(request, 'users/vehicle_status.html', {'data': data})
+    except Exception as e:
+        return render(request, 'users/vehicle_status.html', 
+                    {'error': f"Error loading data: {str(e)}"})
 
 def prediction_view(request):
     return render(request, 'users/prediction.html')  # Adjust as needed
-
-import pandas as pd
-from django.shortcuts import render
-
-def vehicle_status(request):
-    # Load the dataset with the new path and column name
-    df = pd.read_csv('Datasets/EV_Synthetic_Data.csv')  # Adjust the path to your new CSV file
-    
-    # Check if 'vehicle_status' column exists
-    if 'vehicle_status' not in df.columns:
-        return render(request, 'users/vehicle_status.html', {'error': "'vehicle_status' column not found in the dataset."})
-
-    # Count the occurrences of each vehicle status
-    status_counts = df['vehicle_status'].value_counts()
-
-    # Prepare the data for the bar chart
-    data = {
-        'labels': ['Inactive', 'Active'],  # Assume 0 -> 'Inactive' and 1 -> 'Active'
-        'values': [status_counts.get(0, 0), status_counts.get(1, 0)]  # Default to 0 if not found
-    }
-
-    # Pass the data to the template
-    return render(request, 'users/vehicle_status.html', {'data': data})
 
 from django.shortcuts import redirect
 def relationship_view(request):
     # Replace with the correct address for Streamlit
     return redirect("http://127.0.0.1:8501/")
 
+def load_model():
+    model_path = os.path.join(settings.BASE_DIR, 'users', 'models', 'linear_model1.pkl')
+    try:
+        with open(model_path, 'rb') as file:
+            return pickle.load(file)
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        return None
 
-import pickle
-import numpy as np
-from django.shortcuts import render
-from sklearn.preprocessing import OneHotEncoder
-
-# Load the pre-trained model
-with open('users/models/linear_model1.pkl', 'rb') as file:
-    model = pickle.load(file)
-
-# Define categories for one-hot encoding (replace with actual categories you used)
-make_categories = ['Tesla1', 'Tesla2', 'BMW', 'Polestar', 'Volkswagen']
-
-# Create a helper function for one-hot encoding
 def encode_make(make_input):
     return [1 if category == make_input else 0 for category in make_categories[1:]]
 
-# Define the view that will handle the prediction
 def predict_range(request):
-    # Check if the form is submitted
     if request.method == "POST":
-        make_input = request.POST.get('make')  # Get the input vehicle make
-        battery_level_input = float(request.POST.get('battery_level'))  # Get the input battery level
+        try:
+            model = load_model()
+            if model is None:
+                return render(request, 'users/predict_range.html', 
+                            {'error': 'Could not load the prediction model'})
 
-        # One-hot encode the 'make' input
-        make_one_hot = encode_make(make_input)
+            make_input = request.POST.get('make')
+            battery_level_input = float(request.POST.get('battery_level'))
+            make_one_hot = encode_make(make_input)
+            input_data = np.array(make_one_hot + [battery_level_input]).reshape(1, -1)
+            predicted_range = model.predict(input_data)
 
-        # Prepare the input for prediction (make_one_hot + battery_level)
-        input_data = np.array(make_one_hot + [battery_level_input]).reshape(1, -1)
-
-        # Make prediction using the loaded model
-        predicted_range = model.predict(input_data)
-
-        # Display the predicted range
-        return render(request, 'users/predict_range.html', {
-            'predicted_range': predicted_range[0],  # Display the predicted range in the template
-        })
+            return render(request, 'users/predict_range.html', {
+                'predicted_range': predicted_range[0],
+                'make': make_input,
+                'battery_level': battery_level_input
+            })
+        except Exception as e:
+            return render(request, 'users/predict_range.html', 
+                        {'error': f'Prediction error: {str(e)}'})
 
     return render(request, 'users/predict_range.html')
 
-
-# Load the pre-trained model
-with open('users/models/linear_model1.pkl', 'rb') as file:
-    model = pickle.load(file)
-
-# Define categories for one-hot encoding (replace with actual categories you used)
-make_categories = ['Tesla1', 'Tesla2', 'BMW', 'Polestar', 'Volkswagen']
-
-# Create a helper function for one-hot encoding
-def encode_make(make_input):
-    return [1 if category == make_input else 0 for category in make_categories[1:]]
-
-# Define the view that will handle the prediction
 def predict_electric_range(request):
-    # Check if the form is submitted
     if request.method == "POST":
-        make_input = request.POST.get('make')  # Get the input vehicle make
-        battery_level_input = float(request.POST.get('battery_level'))  # Get the input battery level
+        try:
+            model = load_model()
+            if model is None:
+                return render(request, 'users/prediction.html', 
+                            {'error': 'Could not load the prediction model'})
 
-        # One-hot encode the 'make' input
-        make_one_hot = encode_make(make_input)
+            make_input = request.POST.get('make')
+            battery_level_input = float(request.POST.get('battery_level'))
+            make_one_hot = encode_make(make_input)
+            input_data = np.array(make_one_hot + [battery_level_input]).reshape(1, -1)
+            predicted_range = model.predict(input_data)
 
-        # Prepare the input for prediction (make_one_hot + battery_level)
-        input_data = np.array(make_one_hot + [battery_level_input]).reshape(1, -1)
-
-        # Make prediction using the loaded model
-        predicted_range = model.predict(input_data)
-
-        # Display the predicted range
-        return render(request, 'users/prediction.html', {
-            'predicted_range': predicted_range[0],  # Display the predicted range in the template
-        })
+            return render(request, 'users/prediction.html', {
+                'predicted_range': predicted_range[0],
+                'make': make_input,
+                'battery_level': battery_level_input
+            })
+        except Exception as e:
+            return render(request, 'users/prediction.html', 
+                        {'error': f'Prediction error: {str(e)}'})
 
     return render(request, 'users/prediction.html')
-
 
 from django.shortcuts import render
 import pandas as pd
@@ -210,44 +196,65 @@ columns_to_display = [
 ]
 
 def relationship_analysis(request):
-    x_axis = request.GET.get("x_axis", "Select X")
-    y_axis = request.GET.get("y_axis", "Select Y")
-    chart_type = request.GET.get("chart_type", "Bar Chart")
-    plot_div = None
+    try:
+        data = pd.read_csv(os.path.join(settings.BASE_DIR, 'Datasets', 'EV_Synthetic_Data.csv'))
+        columns_to_display = [
+            "Acceleration 0 - 100 km/h", 
+            "Top Speed", 
+            "Electric Range", 
+            "Total Power", 
+            "Total Torque", 
+            "Wheelbase", 
+            "Gross Vehicle Weight (GVWR)", 
+            "Cargo Volume", 
+            "Battery Capacity", 
+            "Maintenance Cost", 
+            "Battery Level", 
+            "Range",
+            "Make"
+        ]
 
-    if x_axis != "Select X" and y_axis != "Select Y" and x_axis in data.columns and y_axis in data.columns:
-        # Clean data and scale selected columns
-        data_clean = data.dropna(subset=[x_axis, y_axis])
-        scaler = MinMaxScaler()
-        data_clean[x_axis] = scaler.fit_transform(data_clean[[x_axis]])
-        data_clean[y_axis] = scaler.fit_transform(data_clean[[y_axis]])
+        x_axis = request.GET.get("x_axis", "Select X")
+        y_axis = request.GET.get("y_axis", "Select Y")
+        chart_type = request.GET.get("chart_type", "Bar Chart")
+        plot_div = None
 
-        # Generate chart based on the selected type
-        if chart_type == "Bar Chart":
-            fig = px.bar(data_clean, x=x_axis, y=y_axis, title=f"{chart_type}: {x_axis} vs {y_axis}", color="Make")
-        elif chart_type == "Scatter Plot":
-            fig = px.scatter(data_clean, x=x_axis, y=y_axis, title=f"{chart_type}: {x_axis} vs {y_axis}", color="Make")
-        elif chart_type == "Line Chart":
-            fig = px.line(data_clean, x=x_axis, y=y_axis, title=f"{chart_type}: {x_axis} vs {y_axis}", color="Make")
-        elif chart_type == "Area Chart":
-            fig = px.area(data_clean, x=x_axis, y=y_axis, title=f"{chart_type}: {x_axis} vs {y_axis}", color="Make")
-        elif chart_type == "Pie Chart":
-            if x_axis == "Make":  # Pie chart works with categorical data
-                fig = px.pie(data_clean, names="Make", title=f"{chart_type} of Vehicle Make")
-            else:
-                fig = px.pie(data_clean, values=y_axis, names=x_axis, title=f"{chart_type}: {x_axis} vs {y_axis}")
+        if x_axis != "Select X" and y_axis != "Select Y" and x_axis in data.columns and y_axis in data.columns:
+            data_clean = data.dropna(subset=[x_axis, y_axis])
+            
+            if x_axis != "Make" and y_axis != "Make":
+                scaler = MinMaxScaler()
+                data_clean[x_axis] = scaler.fit_transform(data_clean[[x_axis]])
+                data_clean[y_axis] = scaler.fit_transform(data_clean[[y_axis]])
 
-        # Convert Plotly figure to HTML div
-        plot_div = plot(fig, output_type="div")
+            if chart_type == "Bar Chart":
+                fig = px.bar(data_clean, x=x_axis, y=y_axis, title=f"{chart_type}: {x_axis} vs {y_axis}", color="Make")
+            elif chart_type == "Scatter Plot":
+                fig = px.scatter(data_clean, x=x_axis, y=y_axis, title=f"{chart_type}: {x_axis} vs {y_axis}", color="Make")
+            elif chart_type == "Line Chart":
+                fig = px.line(data_clean, x=x_axis, y=y_axis, title=f"{chart_type}: {x_axis} vs {y_axis}", color="Make")
+            elif chart_type == "Area Chart":
+                fig = px.area(data_clean, x=x_axis, y=y_axis, title=f"{chart_type}: {x_axis} vs {y_axis}", color="Make")
+            elif chart_type == "Pie Chart":
+                if x_axis == "Make":
+                    fig = px.pie(data_clean, names="Make", title=f"{chart_type} of Vehicle Make")
+                else:
+                    fig = px.pie(data_clean, values=y_axis, names=x_axis, title=f"{chart_type}: {x_axis} vs {y_axis}")
 
-    return render(request, "users/relationship_analysis.html", {
-        "columns": columns_to_display,
-        "plot_div": plot_div,
-        "selected_x": x_axis,
-        "selected_y": y_axis,
-        "selected_chart": chart_type
-    })
+            plot_div = plot(fig, output_type="div")
 
+        return render(request, "users/relationship_analysis.html", {
+            "columns": columns_to_display,
+            "plot_div": plot_div,
+            "selected_x": x_axis,
+            "selected_y": y_axis,
+            "selected_chart": chart_type
+        })
+    except Exception as e:
+        return render(request, "users/relationship_analysis.html", {
+            "columns": columns_to_display,
+            "error": f"Error analyzing relationships: {str(e)}"
+        })
 
 from django.contrib.auth import logout
 def custom_logout_view(request):

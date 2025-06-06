@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-4o18b$kexd8cn-_$a0hvvjmzyj17y3uob^64pr_akb%+^tp%c0')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
@@ -53,7 +53,10 @@ ROOT_URLCONF = "ev_fleet_management.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'users/templates'),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -107,11 +110,12 @@ STATIC_URL = '/static/'  # URL to access static files
 # Add this to point to the static directory
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'ev_fleet_management/static'),  # Location of static files in the project
+    os.path.join(BASE_DIR, 'users/static'),
 ]
 
 # Add STATIC_ROOT for deployment
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -120,10 +124,11 @@ ASGI_APPLICATION = 'ev_fleet_management.asgi.application'
 
 # Redis Channel Layer Configuration
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],  # Redis server address
-        },
-    },
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
+
+# Login URL
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'fleet_manager_home'  # or 'driver_home' depending on user role
