@@ -5,6 +5,7 @@ services:
     buildCommand: |
       python -m pip install --upgrade pip
       pip install -r requirements.txt
+      mkdir -p staticfiles
       python manage.py collectstatic --noinput
     startCommand: gunicorn ev_fleet_management.wsgi:application
     envVars:
@@ -16,4 +17,10 @@ services:
         value: .onrender.com
       - key: DISABLE_COLLECTSTATIC
         value: 0
-    autoDeploy: true 
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+    autoDeploy: true
+    disk:
+      name: ev-data
+      mountPath: /opt/render/project/src/Datasets
+      sizeGB: 1 
