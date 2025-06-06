@@ -13,11 +13,11 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.7
       - key: DEBUG
-        value: False
+        value: "False"
       - key: DJANGO_ALLOWED_HOSTS
         value: .onrender.com
       - key: DISABLE_COLLECTSTATIC
-        value: 0
+        value: "0"
       - key: PYTHONPATH
         value: /opt/render/project/src
       - key: SECRET_KEY
@@ -26,8 +26,6 @@ services:
         value: https://exeobxeodzxirzdgymcd.supabase.co
       - key: SUPABASE_KEY
         value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4ZW9ieGVvZHp4aXJ6ZGd5bWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyMzI4MTksImV4cCI6MjA2NDgwODgxOX0.V_vLv4xU_LzbKM7YWl2eOxP9QUfcMyyAL4YB31u9LPE
-      - key: DATABASE_URL
-        value: postgres://postgres.exeobxeodzxirzdgymcd:postgres@db.exeobxeodzxirzdgymcd.supabase.co:5432/postgres
     autoDeploy: true
     disk:
       name: ev-data
