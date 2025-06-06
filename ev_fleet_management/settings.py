@@ -74,7 +74,7 @@ WSGI_APPLICATION = "ev_fleet_management.wsgi.application"
 # Database
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
+        default='postgresql://postgres:postgres@localhost:5432/mydb',
         conn_max_age=600
     )
 }
