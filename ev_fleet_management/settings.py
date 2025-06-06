@@ -1,9 +1,42 @@
 import os
 from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv
+from supabase import create_client, Client
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Supabase Configuration
+SUPABASE_URL = 'https://exeobxeodzxirzdgymcd.supabase.co'
+SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4ZW9ieGVvZHp4aXJ6ZGd5bWNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyMzI4MTksImV4cCI6MjA2NDgwODgxOX0.V_vLv4xU_LzbKM7YWl2eOxP9QUfcMyyAL4YB31u9LPE'
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# Database Configuration for Supabase
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': f'{SUPABASE_URL.replace("https://", "")}.postgres.supabase.co',
+        'NAME': 'postgres',
+        'USER': 'postgres.exeobxeodzxirzdgymcd',
+        'PASSWORD': 'postgres',  # This will be overridden by environment variable
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require'
+        }
+    }
+}
+
+# Override database settings with environment variables if available
+if os.environ.get('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True,
+    )
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -20,14 +53,14 @@ CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
 # Application definition
 
 INSTALLED_APPS = [
-    'users',
-    'django.contrib.sites',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'users',
+    'django.contrib.admin',
     'django.contrib.sessions',
-    "django.contrib.admin",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_plotly_dash',
     'django_bootstrap5',  # Optional for styling
     'channels',  # Required for live updates
@@ -42,6 +75,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'users.middleware.SupabaseAuthMiddleware',  # Add Supabase middleware
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',  # For Plotly Dash
@@ -70,14 +104,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "ev_fleet_management.wsgi.application"
-
-# Database
-DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/mydb',
-        conn_max_age=600
-    )
-}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -132,3 +158,9 @@ CHANNEL_LAYERS = {
 # Login URL
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'fleet_manager_home'  # or 'driver_home' depending on user role
+
+# Authentication settings
+AUTHENTICATION_BACKENDS = [
+    'users.auth_backend.SupabaseAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',  # Keep default backend as fallback
+]
